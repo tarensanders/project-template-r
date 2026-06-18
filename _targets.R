@@ -4,7 +4,8 @@ library(tarchetypes)
 tar_option_set(
   # packages = c("dplyr"), # Uncomment and add any packages your targets need
   controller = crew::crew_controller_local(
-    workers = min(parallel::detectCores() - 2, 20), seconds_idle = 15
+    workers = min(parallel::detectCores() - 2, 20),
+    seconds_idle = 15
   )
 )
 
