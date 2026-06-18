@@ -8,16 +8,13 @@ This project runs inside a Dev Container using the image `ghcr.io/tarensanders/r
 
 ## Package Management
 
-Packages are managed with [`capsule`](https://github.com/mjwestgate/capsule) (a wrapper around `renv`). The `renv/` directory is gitignored; the lockfile is tracked.
+Packages are declared in `devcontainer.json` under the `r-packages` feature (`"packages": "pkg1,pkg2,..."`). Rebuild the container to pick up new packages. At project completion, run `capsule::create()` to snapshot the lockfile for reproducibility — no `capsule::install()` step is needed during active development.
 
-```r
-capsule::create()      # initialise or rebuild the lockfile
-capsule::install()     # restore packages from lockfile
-```
+The `renv/` directory is gitignored; `renv.lock` is tracked.
 
 ## Workflow
 
-Pipelines are built with [`targets`](https://docs.ropensci.org/targets/). The `_targets/` store is gitignored.
+Pipelines are built with [`targets`](https://docs.ropensci.org/targets/). The `_targets/` store is gitignored. The pipeline is defined in `_targets.R`; helper functions live in `R/` and are sourced automatically.
 
 ```r
 targets::tar_make()          # run the full pipeline
@@ -26,13 +23,13 @@ targets::tar_visnetwork()    # visualise the dependency graph
 targets::tar_read("name")    # inspect a target's output
 ```
 
-## Linting
+## Formatting
 
-Linting uses [`lintr`](https://lintr.r-lib.org/). Configuration lives in `.lintr` (gitignored at project root; add one per project).
+Formatting uses [Air](https://github.com/posit-dev/air). Air is pre-installed in the devcontainer; format-on-save is enabled automatically. Config lives in `air.toml`.
 
-```r
-lintr::lint_dir()      # lint all R files
-lintr::lint("file.R")  # lint a single file
+```sh
+air format .          # format all R files
+air format --check .  # check without modifying (used in CI)
 ```
 
 ## Project Conventions
@@ -40,4 +37,5 @@ lintr::lint("file.R")  # lint a single file
 - `data/` and `temp/` are gitignored — keep raw and intermediate data out of git.
 - `.Renviron` is gitignored — store secrets and environment-specific paths there.
 - `scratch.R` is gitignored — use it freely for throwaway exploration.
-- Analysis scripts live alongside a `_targets.R` pipeline definition at the project root.
+- The pipeline is defined in `_targets.R`; analysis helpers live in `R/`.
+- `air.toml` sets project-wide formatting rules.
