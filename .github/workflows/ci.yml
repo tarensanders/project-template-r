@@ -1,0 +1,15 @@
+name: CI
+on: [push, pull_request]
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Air
+        run: |
+          curl -fsSL https://github.com/posit-dev/air/releases/latest/download/air-installer.sh \
+            | sh -s -- --no-modify-path
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+      - name: Check formatting
+        run: air format --check .
